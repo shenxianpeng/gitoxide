@@ -3,9 +3,7 @@
 **Fast, safe, pure-Rust Git for Python — bindings to the [gitoxide](https://github.com/GitoxideLabs/gitoxide) engine, and a modern alternative to GitPython.**
 
 `gitoxide` (the `gix` crate) is a next-generation, pure-Rust implementation of
-Git, used by projects such as [`uv`](https://github.com/astral-sh/uv) and
-[`onefetch`](https://github.com/o2sh/onefetch). It was created by **Byron**, who
-is also the original author of **GitPython**.
+Git.
 
 This project exposes that engine to Python through [PyO3](https://pyo3.rs) and
 ships as pre-built wheels via [maturin](https://www.maturin.rs), so you get:
