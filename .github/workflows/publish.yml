@@ -1,22 +1,19 @@
 name: Publish to PyPI
 
-# Build native wheels for every supported platform plus an sdist, then publish.
+# Build native wheels for every supported platform plus an sdist, then publish
+# to PyPI via the official pypa/gh-action-pypi-publish action.
 #
-# Why not the reusable shenxianpeng/.github `py-publish.yml`? That workflow is
-# for pure-Python packages: it builds a single wheel on one runner. This is a
-# compiled PyO3/Rust extension, so it needs per-platform, manylinux-compatible
-# wheels (a bare `linux_x86_64` wheel is rejected by PyPI, and macOS/Windows
-# users would get no wheel at all). We therefore build with maturin here, but
-# keep the same conventions: TestPyPI on manual dispatch, PyPI on a tag, and the
-# org's existing API-token secrets.
+# Pre-built wheels are produced for Linux (manylinux, x86_64 + aarch64), macOS
+# (x86_64 + Apple Silicon), and Windows — all using maturin.
 
 on:
   push:
     tags: ["v*"]
-  workflow_dispatch: # manual runs publish to TestPyPI
 
 permissions:
   contents: read
+  # Needed by pypa/gh-action-pypi-publish for OIDC trusted publishing.
+  id-token: write
 
 jobs:
   linux:
@@ -25,17 +22,17 @@ jobs:
       matrix:
         target: [x86_64, aarch64]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.x"
       - name: Build wheels
-        uses: PyO3/maturin-action@v1
+        uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
         with:
           target: ${{ matrix.target }}
           args: --release --out dist
           manylinux: auto
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: wheels-linux-${{ matrix.target }}
           path: dist
@@ -46,16 +43,16 @@ jobs:
       matrix:
         target: [x86_64, aarch64]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.x"
       - name: Build wheels
-        uses: PyO3/maturin-action@v1
+        uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
         with:
           target: ${{ matrix.target }}
           args: --release --out dist
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: wheels-macos-${{ matrix.target }}
           path: dist
@@ -63,16 +60,16 @@ jobs:
   windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.x"
       - name: Build wheels
-        uses: PyO3/maturin-action@v1
+        uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
         with:
           target: x64
           args: --release --out dist
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: wheels-windows
           path: dist
@@ -80,13 +77,13 @@ jobs:
   sdist:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - name: Build sdist
-        uses: PyO3/maturin-action@v1
+        uses: PyO3/maturin-action@e83996d129638aa358a18fbd1dfb82f0b0fb5d3b # v1.51.0
         with:
           command: sdist
           args: --out dist
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: wheels-sdist
           path: dist
@@ -98,26 +95,13 @@ jobs:
     # Only publish from the canonical repo, never from forks.
     if: startsWith(github.repository, 'shenxianpeng')
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download built distributions
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           pattern: wheels-*
           merge-multiple: true
           path: dist
-      - uses: actions/setup-python@v5
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
         with:
-          python-version: "3.x"
-      - run: python -m pip install --upgrade twine
-      - name: Check distributions
-        run: twine check dist/*
-      - name: Publish to TestPyPI (manual dispatch)
-        if: github.event_name == 'workflow_dispatch'
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
-        run: twine upload --repository testpypi --skip-existing dist/*
-      - name: Publish to PyPI (tag push)
-        if: github.event_name == 'push'
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-        run: twine upload --skip-existing dist/*
+          password: ${{ secrets.PYPI_API_TOKEN }}
