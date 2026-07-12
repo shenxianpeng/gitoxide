@@ -1,5 +1,7 @@
 # gitoxide-python
 
+[![CI](https://github.com/shenxianpeng/gitoxide/actions/workflows/CI.yml/badge.svg)](https://github.com/shenxianpeng/gitoxide/actions/workflows/CI.yml)
+
 **Fast, safe, pure-Rust Git for Python — bindings to the [gitoxide](https://github.com/GitoxideLabs/gitoxide) engine, and a modern alternative to GitPython.**
 
 `gitoxide` (the `gix` crate) is a next-generation, pure-Rust implementation of
@@ -114,6 +116,10 @@ in-process in Rust.
 Properties: `git_dir`, `workdir`, `is_bare`, `is_shallow`, `head_id`,
 `head_name`, `head_is_detached`.
 
+> **Note:** `head_name` and `head_is_detached` access the `HEAD` reference
+> and may raise `GitoxideError` if it is inaccessible (e.g., corrupted
+> repository). Other properties never raise.
+
 Methods: `head_commit()`, `rev_parse(spec)`, `commit(rev)`,
 `commits(rev=None, max_count=None)`, `references()`, `branches()`, `tags()`,
 `read_blob(rev)`.
@@ -131,7 +137,8 @@ Methods: `head_commit()`, `rev_parse(spec)`, `commit(rev)`,
 
 `name`, `shorthand`, `target`.
 
-Errors are raised as `gitoxide.GitoxideError`.
+All errors (from any function or method) are raised as
+`gitoxide.GitoxideError`.
 
 ## Roadmap
 
