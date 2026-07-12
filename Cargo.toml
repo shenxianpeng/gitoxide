@@ -24,7 +24,7 @@ gix = { version = "0.75", default-features = false, features = [
 ] }
 
 [dependencies.pyo3]
-version = "0.26"
+version = "0.29"
 # `abi3-py39` builds a single wheel compatible with CPython 3.9+.
 features = ["extension-module", "abi3-py39"]
 
