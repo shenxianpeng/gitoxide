@@ -18,7 +18,7 @@ crate-type = ["cdylib"]
 # toolchain required) while enabling the `parallel` feature, which makes
 # `gix::Repository` `Send + Sync` (backed by `Arc`) so it can live inside a
 # PyO3 `#[pyclass]`.
-gix = { version = "0.75", default-features = false, features = [
+gix = { version = "0.83", default-features = false, features = [
     "max-performance-safe",
     "revision",
 ] }
