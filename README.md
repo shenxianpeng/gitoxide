@@ -166,6 +166,3 @@ touch nothing outside a temp directory.
 
 Licensed under either of Apache License 2.0 or MIT license at your option, to
 match the upstream gitoxide project.
-
-Licensed under either of Apache License 2.0 or MIT license at your option, to
-match the upstream gitoxide project.
