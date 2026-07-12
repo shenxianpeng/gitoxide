@@ -1,0 +1,29 @@
+.github/workflows/CI.yml
+  s_013d518ff617e8::t_b920c3509f10cb 20,22-23,26,41-42,56-57,59,61,65
+pyproject.toml
+  h_95e33fbd4ab2d9 13
+  s_013d518ff617e8::t_6a107877dffe5c 24
+.github/workflows/publish.yml
+  s_013d518ff617e8::t_33815460afeaf2 3-4,6-7,15-16,25-26,30,35,46-47,51,55,63-64,68,72,80,82,86,98-99,104-105,107
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "a3f0145fe17386834e1a90b79a159b30c70915cc",
+  "prompts": {},
+  "humans": {
+    "h_95e33fbd4ab2d9": {
+      "author": "shenxianpeng <xianpeng.shen@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_013d518ff617e8": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f575a-0d84-7650-bea8-6f2bda6f2846",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "shenxianpeng <xianpeng.shen@gmail.com>"
+    }
+  }
+}
