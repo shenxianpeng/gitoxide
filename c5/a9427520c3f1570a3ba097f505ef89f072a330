@@ -1,0 +1,19 @@
+README.md
+  s_0162af890ef66a::t_7c90780d899218 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "c5a9427520c3f1570a3ba097f505ef89f072a330",
+  "prompts": {},
+  "sessions": {
+    "s_0162af890ef66a": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f576a-d546-7b8a-8eb3-312b597dfec9",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "shenxianpeng <xianpeng.shen@gmail.com>"
+    }
+  }
+}
