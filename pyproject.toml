@@ -1,0 +1,37 @@
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "gitoxide"
+version = "0.1.0"
+description = "Fast, safe, pure-Rust Git for Python — bindings to the gitoxide engine and a modern alternative to GitPython"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT OR Apache-2.0" }
+authors = [{ name = "shenxianpeng", email = "xianpeng.shen@gmail.com" }]
+keywords = ["git", "gitoxide", "gix", "vcs", "version-control", "gitpython"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Rust",
+    "Topic :: Software Development :: Version Control :: Git",
+]
+
+[project.urls]
+Homepage = "https://github.com/shenxianpeng/gitoxide"
+Repository = "https://github.com/shenxianpeng/gitoxide"
+"gitoxide (Rust)" = "https://github.com/GitoxideLabs/gitoxide"
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+
+[tool.maturin]
+# Mixed Rust/Python project: pure-Python sources live in `python/`, the
+# compiled extension is placed as `gitoxide._gitoxide`.
+python-source = "python"
+module-name = "gitoxide._gitoxide"
+features = ["pyo3/extension-module"]

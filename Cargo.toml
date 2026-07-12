@@ -1,0 +1,33 @@
+[package]
+name = "gitoxide-python"
+version = "0.1.0"
+edition = "2021"
+description = "Fast, pure-Rust Git for Python — PyO3 bindings to the gitoxide (gix) engine"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/shenxianpeng/gitoxide"
+readme = "README.md"
+
+[lib]
+# The compiled extension module. Imported by the pure-Python `gitoxide`
+# package as `gitoxide._gitoxide`.
+name = "_gitoxide"
+crate-type = ["cdylib"]
+
+[dependencies]
+# The gitoxide engine. `max-performance-safe` keeps builds portable (no C
+# toolchain required) while enabling the `parallel` feature, which makes
+# `gix::Repository` `Send + Sync` (backed by `Arc`) so it can live inside a
+# PyO3 `#[pyclass]`.
+gix = { version = "0.75", default-features = false, features = [
+    "max-performance-safe",
+    "revision",
+] }
+
+[dependencies.pyo3]
+version = "0.26"
+# `abi3-py39` builds a single wheel compatible with CPython 3.9+.
+features = ["extension-module", "abi3-py39"]
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
