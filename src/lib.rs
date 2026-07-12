@@ -397,10 +397,11 @@ fn init(path: PathBuf, bare: bool) -> PyResult<Repository> {
     Repository::init(path, bare)
 }
 
-/// The version of the underlying `gix` engine, for diagnostics.
+/// The exact version of the underlying `gix` engine this build links against
+/// (resolved from `Cargo.lock` at build time), for diagnostics.
 #[pyfunction]
 fn gix_version() -> &'static str {
-    "0.75"
+    env!("GIX_VERSION")
 }
 
 #[pymodule]

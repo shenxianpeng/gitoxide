@@ -24,11 +24,22 @@ ships as pre-built wheels via [maturin](https://www.maturin.rs), so you get:
 
 ## Installation
 
-From source (requires a Rust toolchain):
+```bash
+pip install gitoxide
+```
+
+Pre-built wheels are published for Linux (manylinux, x86_64 + aarch64), macOS
+(x86_64 + Apple Silicon), and Windows — no Rust toolchain or system `libgit2`
+required.
+
+### From source
+
+Building from a checkout (or from the sdist on an unsupported platform) requires
+a [Rust toolchain](https://rustup.rs):
 
 ```bash
 pip install maturin
-maturin develop            # build + install into the active venv
+maturin develop            # build + install into the active virtualenv
 # or build a wheel:
 maturin build --release
 ```
@@ -71,22 +82,25 @@ print(readme.decode())
 
 ## Migrating from GitPython
 
-```python
-# GitPython
-from git import Repo
-repo = Repo(".")
-for c in repo.iter_commits("main", max_count=10):
-    print(c.hexsha[:7], c.author.name, c.summary)
+Common operations, side by side:
 
-# gitoxide-python
-import gitoxide
-repo = gitoxide.open(".")
-for c in repo.commits("main", max_count=10):
-    print(c.short_id, c.author.name, c.summary)
-```
+| GitPython | gitoxide-python |
+|---|---|
+| `from git import Repo` | `import gitoxide` |
+| `repo = Repo(path)` | `repo = gitoxide.open(path)` |
+| `Repo(path, search_parent_directories=True)` | `gitoxide.discover(path)` |
+| `repo.head.commit` | `repo.head_commit()` |
+| `repo.active_branch.name` | `repo.head_name` |
+| `repo.iter_commits("main", max_count=10)` | `repo.commits("main", max_count=10)` |
+| `repo.commit("HEAD~2")` | `repo.commit("HEAD~2")` |
+| `repo.rev_parse("main").hexsha` | `repo.rev_parse("main")` |
+| `[b.name for b in repo.branches]` | `repo.branches()` |
+| `[t.name for t in repo.tags]` | `repo.tags()` |
+| `c.hexsha`, `c.summary`, `c.author.name` | `c.id`, `c.summary`, `c.author.name` |
 
-The key difference: GitPython's `iter_commits` spawns a `git rev-list`
-subprocess; `gitoxide-python` walks the object database in-process in Rust.
+The key difference is what happens underneath: GitPython's `iter_commits` spawns
+a `git rev-list` subprocess; gitoxide-python walks the object database
+in-process in Rust.
 
 ## API
 
@@ -133,7 +147,27 @@ Errors are raised as `gitoxide.GitoxideError`.
 Contributions welcome — the binding layer lives in a single [`src/lib.rs`](src/lib.rs)
 and maps cleanly onto the `gix` API.
 
+## Development
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install maturin pytest
+
+maturin develop          # build the extension into the venv
+pytest -q                # run the test suite
+
+cargo fmt --all          # format Rust
+cargo clippy --all-targets -- -D warnings
+```
+
+The tests generate a throwaway git repository on the fly (see
+[`tests/conftest.py`](tests/conftest.py)), so they need `git` on `PATH` but
+touch nothing outside a temp directory.
+
 ## License
+
+Licensed under either of Apache License 2.0 or MIT license at your option, to
+match the upstream gitoxide project.
 
 Licensed under either of Apache License 2.0 or MIT license at your option, to
 match the upstream gitoxide project.
