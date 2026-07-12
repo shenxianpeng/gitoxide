@@ -1,0 +1,23 @@
+.github/workflows/release-drafter.yml
+  s_0162af890ef66a::t_fe6562aac70c4a 1-22
+.github/release-drafter-config.yml
+  s_0162af890ef66a::t_e54846abbcd8dd 1-45
+README.md
+  s_0162af890ef66a::t_fb1110de1041f3 6-7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "9d84448b174b6404775c34ca4bee147e96924cd2",
+  "prompts": {},
+  "sessions": {
+    "s_0162af890ef66a": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f576a-d546-7b8a-8eb3-312b597dfec9",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "shenxianpeng <xianpeng.shen@gmail.com>"
+    }
+  }
+}
