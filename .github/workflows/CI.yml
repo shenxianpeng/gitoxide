@@ -24,10 +24,13 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - uses: dtolnay/rust-toolchain@stable
-      - name: Install maturin & pytest
-        run: pip install maturin pytest
-      - name: Build & install
-        run: maturin develop --release
+      - name: Install test deps
+        run: pip install pytest
+      - name: Build & install the extension
+        # Build via PEP 517 (maturin backend, release profile by default) and
+        # install into the runner's Python. Unlike `maturin develop`, this
+        # needs no pre-existing virtualenv.
+        run: pip install .
       - name: Run tests
         run: pytest -q
 
