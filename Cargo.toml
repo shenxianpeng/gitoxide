@@ -21,6 +21,7 @@ crate-type = ["cdylib"]
 gix = { version = "0.85", default-features = false, features = [
     "max-performance-safe",
     "revision",
+    "sha1",
 ] }
 
 [dependencies.pyo3]

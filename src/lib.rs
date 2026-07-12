@@ -33,7 +33,7 @@ fn bstr_to_string(b: &gix::bstr::BStr) -> String {
 // ---------------------------------------------------------------------------
 
 /// The authorship information attached to a commit (name, email, timestamp).
-#[pyclass(module = "gitoxide._gitoxide", frozen)]
+#[pyclass(module = "gitoxide._gitoxide", frozen, skip_from_py_object)]
 #[derive(Clone)]
 struct Signature {
     #[pyo3(get)]
@@ -79,7 +79,7 @@ impl Signature {
 // ---------------------------------------------------------------------------
 
 /// A fully-decoded, owned view of a git commit.
-#[pyclass(module = "gitoxide._gitoxide", frozen)]
+#[pyclass(module = "gitoxide._gitoxide", frozen, skip_from_py_object)]
 #[derive(Clone)]
 struct Commit {
     #[pyo3(get)]
@@ -136,12 +136,14 @@ impl Commit {
 impl Commit {
     fn from_gix(commit: &gix::Commit<'_>) -> PyResult<Self> {
         let commit_ref = commit.decode().map_err(err)?;
+        let author = commit_ref.author().map_err(err)?;
+        let committer = commit_ref.committer().map_err(err)?;
         Ok(Commit {
             id: commit.id().to_hex().to_string(),
             tree_id: commit_ref.tree().to_hex().to_string(),
             message: bstr_to_string(commit_ref.message.as_bstr()),
-            author: Signature::from_ref(&commit_ref.author),
-            committer: Signature::from_ref(&commit_ref.committer),
+            author: Signature::from_ref(&author),
+            committer: Signature::from_ref(&committer),
             parents: commit_ref
                 .parents()
                 .map(|id| id.to_hex().to_string())
@@ -155,7 +157,7 @@ impl Commit {
 // ---------------------------------------------------------------------------
 
 /// A git reference (branch, tag, or other ref) and the object it points at.
-#[pyclass(module = "gitoxide._gitoxide", frozen)]
+#[pyclass(module = "gitoxide._gitoxide", frozen, skip_from_py_object)]
 #[derive(Clone)]
 struct Reference {
     /// The full ref name, e.g. `refs/heads/main`.
