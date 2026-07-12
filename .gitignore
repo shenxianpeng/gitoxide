@@ -1,0 +1,16 @@
+# Rust
+/target
+# Cargo.lock is committed on purpose: this crate produces a distributed binary
+# artifact (the wheel), so we want reproducible builds.
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+.pytest_cache/
+build/
+dist/
+*.egg-info/
+wheels/
