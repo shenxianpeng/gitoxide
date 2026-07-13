@@ -6,10 +6,8 @@
 **Fast, safe, pure-Rust Git for Python — bindings to the [gitoxide](https://github.com/GitoxideLabs/gitoxide) engine, and a modern alternative to GitPython.**
 
 `gitoxide` (the `gix` crate) is a next-generation, pure-Rust implementation of
-Git.
-
-This project exposes that engine to Python through [PyO3](https://pyo3.rs) and
-ships as pre-built wheels via [maturin](https://www.maturin.rs), so you get:
+Git. This project exposes that engine to Python through [PyO3](https://pyo3.rs)
+and ships as pre-built wheels via [maturin](https://www.maturin.rs), so you get:
 
 | | GitPython | pygit2 | **gitoxide-python** |
 |---|---|---|---|
@@ -18,10 +16,10 @@ ships as pre-built wheels via [maturin](https://www.maturin.rs), so you get:
 | Install | needs `git` on `PATH` | needs a C toolchain / system `libgit2` | `pip install`, self-contained wheels |
 | Memory safety | n/a (subprocess) | C | Rust |
 
-> **Status: alpha.** The binding surface is small but real and growing. It
-> currently covers read-oriented workflows (open/discover, HEAD, history walk,
-> refs, branches, tags, blob reads) — the operations DevOps tooling reaches for
-> most. See [Roadmap](#roadmap).
+> **Status: alpha.** The binding surface is small but real. It currently covers
+> read-oriented workflows (open/discover, HEAD, history walk, refs, branches,
+> tags, blob reads) — the operations DevOps tooling reaches for most. See
+> [Scope](#scope) for what is and isn't wrapped yet.
 
 ## Installation
 
@@ -32,18 +30,6 @@ pip install gitoxide
 Pre-built wheels are published for Linux (manylinux, x86_64 + aarch64), macOS
 (x86_64 + Apple Silicon), and Windows — no Rust toolchain or system `libgit2`
 required.
-
-### From source
-
-Building from a checkout (or from the sdist on an unsupported platform) requires
-a [Rust toolchain](https://rustup.rs):
-
-```bash
-pip install maturin
-maturin develop            # build + install into the active virtualenv
-# or build a wheel:
-maturin build --release
-```
 
 ## Quick start
 
@@ -141,19 +127,28 @@ Methods: `head_commit()`, `rev_parse(spec)`, `commit(rev)`,
 All errors (from any function or method) are raised as
 `gitoxide.GitoxideError`.
 
-## Roadmap
+## Scope
 
-- Diffing and status
-- Tree traversal / listing entries
-- Writing commits, staging (index), tag/branch creation
-- Blame
-- Cloning and remote operations (fetch/push)
-- Lazy commit iterators instead of eager lists for very large histories
+This is a binding, not a reimplementation: it exposes a slice of what the `gix`
+engine already does. Today that slice is:
 
-Contributions welcome — the binding layer lives in a single [`src/lib.rs`](src/lib.rs)
-and maps cleanly onto the `gix` API.
+- **Wrapped:** open / discover / init, HEAD, history walk, rev-parse,
+  references, branches, tags, and blob reads.
+- **Not wrapped yet:** diff & status, tree listing, writing commits and the
+  index, blame, and clone / remote operations.
 
-## Development
+The engine supports much more; these are simply the parts this binding hasn't
+surfaced yet. Issues and pull requests that expose more of `gix` are welcome —
+see [Contributing](#contributing).
+
+## Contributing
+
+The binding layer lives in a single [`src/lib.rs`](src/lib.rs) and maps closely
+onto the `gix` API, so adding a method is usually a small, self-contained change.
+
+Building from source requires a [Rust toolchain](https://rustup.rs) (this is
+also the path used when installing the sdist on a platform without a pre-built
+wheel):
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
