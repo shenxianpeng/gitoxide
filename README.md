@@ -1,5 +1,6 @@
 # gitoxide-python
 
+[![PyPI Version](https://img.shields.io/pypi/v/gitoxide)](https://pypi.org/project/gitoxide/)
 [![CI](https://github.com/shenxianpeng/gitoxide/actions/workflows/CI.yml/badge.svg)](https://github.com/shenxianpeng/gitoxide/actions/workflows/CI.yml)
 
 **Fast, safe, pure-Rust Git for Python — bindings to the [gitoxide](https://github.com/GitoxideLabs/gitoxide) engine, and a modern alternative to GitPython.**
