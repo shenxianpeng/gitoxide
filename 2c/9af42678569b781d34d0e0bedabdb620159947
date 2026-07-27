@@ -1,0 +1,19 @@
+pyproject.toml
+  s_194bbefdb7b7fc::t_aeac62290c6109 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "2c9af42678569b781d34d0e0bedabdb620159947",
+  "prompts": {},
+  "sessions": {
+    "s_194bbefdb7b7fc": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019fa3ce-663c-7759-a60c-a3a53e8eddb2",
+        "model": "deepseek-v4-flash"
+      },
+      "human_author": "shenxianpeng <xianpeng.shen@gmail.com>"
+    }
+  }
+}
