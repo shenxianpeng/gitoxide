@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "gitoxide"
-version = "0.1.0"
+# version is sourced from Cargo.toml by maturin during build
 description = "Fast, safe, pure-Rust Git for Python — bindings to the gitoxide engine and a modern alternative to GitPython"
 readme = "README.md"
 requires-python = ">=3.9"
