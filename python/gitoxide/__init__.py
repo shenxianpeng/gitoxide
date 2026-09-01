@@ -25,6 +25,7 @@ Quick start
 from importlib.metadata import PackageNotFoundError, version as _version
 
 from ._gitoxide import (
+    BlameHunk,
     Commit,
     GitoxideError,
     Reference,
@@ -37,6 +38,7 @@ from ._gitoxide import (
 )
 
 __all__ = [
+    "BlameHunk",
     "Commit",
     "GitoxideError",
     "Reference",
