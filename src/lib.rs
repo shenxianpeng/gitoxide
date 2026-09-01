@@ -179,6 +179,55 @@ impl Reference {
 }
 
 // ---------------------------------------------------------------------------
+// BlameHunk
+// ---------------------------------------------------------------------------
+
+/// A run of consecutive lines attributed to a single commit.
+///
+/// Line numbers are 1-based and inclusive, matching ``git blame`` output.
+#[pyclass(module = "gitoxide._gitoxide", frozen, skip_from_py_object)]
+#[derive(Clone)]
+struct BlameHunk {
+    /// First line of the run in the file being blamed.
+    #[pyo3(get)]
+    start_line: u32,
+    /// How many lines the run spans.
+    #[pyo3(get)]
+    line_count: u32,
+    /// First line of the run in the file as it looked in `commit_id`. This
+    /// differs from `start_line` when lines moved around.
+    #[pyo3(get)]
+    orig_start_line: u32,
+    /// Hex id of the commit that last touched these lines.
+    #[pyo3(get)]
+    commit_id: String,
+}
+
+#[pymethods]
+impl BlameHunk {
+    /// Last line of the run (inclusive).
+    #[getter]
+    fn end_line(&self) -> u32 {
+        self.start_line + self.line_count - 1
+    }
+
+    /// Abbreviated (7-char) commit id, like `git log --oneline`.
+    #[getter]
+    fn short_id(&self) -> String {
+        self.commit_id.chars().take(7).collect()
+    }
+
+    fn __repr__(&self) -> String {
+        format!(
+            "BlameHunk(lines={}-{}, commit={})",
+            self.start_line,
+            self.end_line(),
+            self.short_id()
+        )
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Repository
 // ---------------------------------------------------------------------------
 
@@ -355,6 +404,35 @@ impl Repository {
         Ok(blob.data.clone())
     }
 
+    /// Attribute every line of `path` to the commit that last modified it.
+    ///
+    /// `path` is relative to the repository root. `rev` picks where the search
+    /// starts and defaults to ``HEAD``. Returns :class:`BlameHunk` objects in
+    /// file order; adjacent lines from the same commit are grouped into one
+    /// hunk, so the result is usually much shorter than the file.
+    #[pyo3(signature = (path, rev = None))]
+    fn blame(&self, path: &str, rev: Option<&str>) -> PyResult<Vec<BlameHunk>> {
+        let suspect = match rev {
+            Some(spec) => self.inner.rev_parse_single(spec).map_err(err)?.detach(),
+            None => self.inner.head_id().map_err(err)?.detach(),
+        };
+        let outcome = self
+            .inner
+            .blame_file(gix::bstr::BStr::new(path), suspect, Default::default())
+            .map_err(err)?;
+        Ok(outcome
+            .entries
+            .iter()
+            .map(|e| BlameHunk {
+                // gix counts from 0; `git blame` counts from 1.
+                start_line: e.start_in_blamed_file + 1,
+                line_count: e.len.get(),
+                orig_start_line: e.start_in_source_file + 1,
+                commit_id: e.commit_id.to_hex().to_string(),
+            })
+            .collect())
+    }
+
     fn __repr__(&self) -> String {
         format!(
             "Repository(git_dir={:?}, bare={})",
@@ -412,6 +490,7 @@ fn _gitoxide(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<Commit>()?;
     m.add_class::<Signature>()?;
     m.add_class::<Reference>()?;
+    m.add_class::<BlameHunk>()?;
     m.add_function(wrap_pyfunction!(open, m)?)?;
     m.add_function(wrap_pyfunction!(discover, m)?)?;
     m.add_function(wrap_pyfunction!(init, m)?)?;

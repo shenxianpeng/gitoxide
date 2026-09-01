@@ -127,3 +127,44 @@ def test_version():
     """__version__ is derived from installed package metadata, not hard-coded."""
     assert isinstance(gitoxide.__version__, str)
     assert gitoxide.__version__ != "0.0.0+unknown"
+
+
+def test_blame(sample_repo):
+    repo = gitoxide.open(str(sample_repo))
+    hunks = repo.blame("file.txt")
+
+    # file.txt is "one\ntwo\n": line 1 came from "add file", line 2 from the
+    # commit that appended it.
+    assert len(hunks) == 2
+    assert [h.start_line for h in hunks] == [1, 2]
+    assert all(h.line_count == 1 for h in hunks)
+    assert all(isinstance(h, gitoxide.BlameHunk) for h in hunks)
+
+    summaries = [repo.commit(h.commit_id).summary for h in hunks]
+    assert summaries == ["add file", "second line"]
+
+
+def test_blame_hunk_fields(sample_repo):
+    repo = gitoxide.open(str(sample_repo))
+    hunk = repo.blame("README.md")[0]
+
+    assert len(hunk.commit_id) == 40
+    assert hunk.short_id == hunk.commit_id[:7]
+    assert hunk.end_line == hunk.start_line + hunk.line_count - 1
+    assert hunk.orig_start_line >= 1
+    assert "BlameHunk(lines=" in repr(hunk)
+
+
+def test_blame_at_rev(sample_repo):
+    repo = gitoxide.open(str(sample_repo))
+    # Before the second line existed, file.txt was a single line.
+    hunks = repo.blame("file.txt", "HEAD~1")
+    assert len(hunks) == 1
+    assert hunks[0].start_line == 1
+    assert repo.commit(hunks[0].commit_id).summary == "add file"
+
+
+def test_blame_missing_path_raises(sample_repo):
+    repo = gitoxide.open(str(sample_repo))
+    with pytest.raises(gitoxide.GitoxideError):
+        repo.blame("does-not-exist.txt")

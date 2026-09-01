@@ -16,6 +16,11 @@ and ships as pre-built wheels via [maturin](https://www.maturin.rs), so you get:
 | Install | needs `git` on `PATH` | needs a C toolchain / system `libgit2` | `pip install`, self-contained wheels |
 | Memory safety | n/a (subprocess) | C | Rust |
 
+<sub>"No subprocess" refers to the `git` CLI: nothing here shells out to `git`.
+A repository that configures a clean/smudge filter (Git LFS, say) will still
+have that filter program executed when `blame` reads such a file — exactly as
+`git` itself would.</sub>
+
 > **Status: alpha.** The binding surface is small but real. It currently covers
 > read-oriented workflows (open/discover, HEAD, history walk, refs, branches,
 > tags, blob reads) — the operations DevOps tooling reaches for most. See
@@ -65,6 +70,10 @@ for ref in repo.references():
 # Read a file's content at a revision
 readme = repo.read_blob("HEAD:README.md")
 print(readme.decode())
+
+# Blame a file: which commit last touched each line
+for hunk in repo.blame("README.md"):
+    print(f"{hunk.start_line}-{hunk.end_line}\t{hunk.short_id}")
 ```
 
 ## Migrating from GitPython
@@ -109,7 +118,7 @@ Properties: `git_dir`, `workdir`, `is_bare`, `is_shallow`, `head_id`,
 
 Methods: `head_commit()`, `rev_parse(spec)`, `commit(rev)`,
 `commits(rev=None, max_count=None)`, `references()`, `branches()`, `tags()`,
-`read_blob(rev)`.
+`read_blob(rev)`, `blame(path, rev=None)`.
 
 ### `Commit`
 
@@ -124,6 +133,12 @@ Methods: `head_commit()`, `rev_parse(spec)`, `commit(rev)`,
 
 `name`, `shorthand`, `target`.
 
+### `BlameHunk`
+
+`start_line`, `end_line`, `line_count`, `orig_start_line`, `commit_id`,
+`short_id`. Line numbers are 1-based and inclusive, matching `git blame`.
+Consecutive lines from the same commit are grouped into one hunk.
+
 All errors (from any function or method) are raised as
 `gitoxide.GitoxideError`.
 
@@ -133,9 +148,9 @@ This is a binding, not a reimplementation: it exposes a slice of what the `gix`
 engine already does. Today that slice is:
 
 - **Wrapped:** open / discover / init, HEAD, history walk, rev-parse,
-  references, branches, tags, and blob reads.
+  references, branches, tags, blob reads, and blame.
 - **Not wrapped yet:** diff & status, tree listing, writing commits and the
-  index, blame, and clone / remote operations.
+  index, and clone / remote operations.
 
 The engine supports much more; these are simply the parts this binding hasn't
 surfaced yet. Issues and pull requests that expose more of `gix` are welcome —

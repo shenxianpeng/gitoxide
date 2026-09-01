@@ -22,6 +22,9 @@ gix = { version = "0.87", default-features = false, features = [
     "max-performance-safe",
     "revision",
     "sha1",
+    # `blame` pulls in `blob-diff` (and thus `attributes`); it is what backs
+    # `Repository.blame()`.
+    "blame",
 ] }
 
 [dependencies.pyo3]
