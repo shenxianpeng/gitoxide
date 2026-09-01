@@ -121,3 +121,9 @@ def test_init_and_bare(tmp_path):
 
 def test_gix_version():
     assert isinstance(gitoxide.gix_version(), str)
+
+
+def test_version():
+    """__version__ is derived from installed package metadata, not hard-coded."""
+    assert isinstance(gitoxide.__version__, str)
+    assert gitoxide.__version__ != "0.0.0+unknown"
