@@ -1,0 +1,233 @@
+{
+  "repo": {
+    "path": "/Users/sxp/Repos/shenxianpeng/cpython",
+    "name": "https://github.com/python/cpython.git",
+    "head": "83360b5869a4981c87dcb59d1186d26c41fe3386",
+    "head_date": "2026-03-21",
+    "commits": 130654,
+    "refs": 531
+  },
+  "machine": {
+    "cpu": "Apple M2",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "python": "3.14.7",
+    "git": "git version 2.52.0"
+  },
+  "parameters": {
+    "walk_count": 10000,
+    "rev_spec": "HEAD~100",
+    "blob_path": "README.rst",
+    "blame_path": "Lib/textwrap.py",
+    "repeats": 7
+  },
+  "libraries": [
+    {
+      "library": "gitpython",
+      "version": "3.1.62",
+      "ops": [
+        {
+          "seconds": 0.00012874995850143024,
+          "min_seconds": 0.00012816687501617706,
+          "max_seconds": 0.00012954424999770707,
+          "runs": 7,
+          "inner_loops": 2000,
+          "op": "open",
+          "result": "-"
+        },
+        {
+          "seconds": 8.730760000180453e-05,
+          "min_seconds": 8.719489159993827e-05,
+          "max_seconds": 8.886851679999381e-05,
+          "runs": 7,
+          "inner_loops": 5000,
+          "op": "head_commit",
+          "result": "83360b5869a4 Hugo van Kemenade Docs: replace all `datetime` imports wit"
+        },
+        {
+          "seconds": 0.003021205000113696,
+          "min_seconds": 0.002962389999884181,
+          "max_seconds": 0.003039386669988744,
+          "runs": 7,
+          "inner_loops": 100,
+          "op": "rev_parse",
+          "result": "00a25859a94b"
+        },
+        {
+          "seconds": 0.3234092079801485,
+          "min_seconds": 0.32181758305523545,
+          "max_seconds": 0.3293030409840867,
+          "runs": 5,
+          "inner_loops": 1,
+          "op": "walk",
+          "result": "n=10000 10053a119ae2"
+        },
+        {
+          "seconds": 0.07440139160025865,
+          "min_seconds": 0.07405647500418126,
+          "max_seconds": 0.07702935000415892,
+          "runs": 5,
+          "inner_loops": 5,
+          "op": "references",
+          "result": "n=531 fcac61820f87"
+        },
+        {
+          "seconds": 0.00017879404200357385,
+          "min_seconds": 0.00017717260448262096,
+          "max_seconds": 0.0001793946039979346,
+          "runs": 7,
+          "inner_loops": 2000,
+          "op": "read_blob",
+          "result": "8911B sha=0f0da09d912c"
+        },
+        {
+          "seconds": 1.0709661250002682,
+          "min_seconds": 1.057144500024151,
+          "max_seconds": 1.0839632090064697,
+          "runs": 3,
+          "inner_loops": 1,
+          "op": "blame",
+          "result": "lines=475"
+        }
+      ]
+    },
+    {
+      "library": "pygit2",
+      "version": "1.20.0",
+      "ops": [
+        {
+          "seconds": 0.00011140516700106672,
+          "min_seconds": 0.00011064331250963733,
+          "max_seconds": 0.00011161531251855195,
+          "runs": 7,
+          "inner_loops": 2000,
+          "op": "open",
+          "result": "-"
+        },
+        {
+          "seconds": 2.256312500103377e-05,
+          "min_seconds": 2.2282716701738536e-05,
+          "max_seconds": 2.2741708299145103e-05,
+          "runs": 7,
+          "inner_loops": 10000,
+          "op": "head_commit",
+          "result": "83360b5869a4 Hugo van Kemenade Docs: replace all `datetime` imports wit"
+        },
+        {
+          "seconds": 2.8245054197032006e-05,
+          "min_seconds": 2.78616041992791e-05,
+          "max_seconds": 2.8725250001298265e-05,
+          "runs": 7,
+          "inner_loops": 10000,
+          "op": "rev_parse",
+          "result": "00a25859a94b"
+        },
+        {
+          "seconds": 0.3892318339785561,
+          "min_seconds": 0.3815786659833975,
+          "max_seconds": 0.3936294160084799,
+          "runs": 3,
+          "inner_loops": 1,
+          "op": "walk",
+          "result": "n=10000 10053a119ae2"
+        },
+        {
+          "seconds": 0.001312270000053104,
+          "min_seconds": 0.0010716045851586386,
+          "max_seconds": 0.0014041931249084883,
+          "runs": 7,
+          "inner_loops": 200,
+          "op": "references",
+          "result": "n=531 fcac61820f87"
+        },
+        {
+          "seconds": 0.00018798508352483621,
+          "min_seconds": 0.00017035066700191238,
+          "max_seconds": 0.00021633525000652298,
+          "runs": 7,
+          "inner_loops": 2000,
+          "op": "read_blob",
+          "result": "8911B sha=0f0da09d912c"
+        },
+        {
+          "seconds": 28.366648749972228,
+          "min_seconds": 28.34439745900454,
+          "max_seconds": 28.487539207970258,
+          "runs": 3,
+          "inner_loops": 1,
+          "op": "blame",
+          "result": "lines=475"
+        }
+      ]
+    },
+    {
+      "library": "gitoxide",
+      "version": "0.4.0",
+      "ops": [
+        {
+          "seconds": 0.00014560083352262154,
+          "min_seconds": 0.0001441859585174825,
+          "max_seconds": 0.00014613847897271626,
+          "runs": 7,
+          "inner_loops": 2000,
+          "op": "open",
+          "result": "-"
+        },
+        {
+          "seconds": 3.4197187499376016e-05,
+          "min_seconds": 3.407376669929363e-05,
+          "max_seconds": 3.499970840057358e-05,
+          "runs": 7,
+          "inner_loops": 10000,
+          "op": "head_commit",
+          "result": "83360b5869a4 Hugo van Kemenade Docs: replace all `datetime` imports wit"
+        },
+        {
+          "seconds": 0.0006022864179685712,
+          "min_seconds": 0.0006003217499237507,
+          "max_seconds": 0.0006062967500183731,
+          "runs": 7,
+          "inner_loops": 500,
+          "op": "rev_parse",
+          "result": "00a25859a94b"
+        },
+        {
+          "seconds": 0.12907747901044786,
+          "min_seconds": 0.1288012709992472,
+          "max_seconds": 0.1296615835162811,
+          "runs": 5,
+          "inner_loops": 2,
+          "op": "walk",
+          "result": "n=10000 10053a119ae2"
+        },
+        {
+          "seconds": 0.0034496933402260767,
+          "min_seconds": 0.003432814169791527,
+          "max_seconds": 0.003457466670079157,
+          "runs": 7,
+          "inner_loops": 100,
+          "op": "references",
+          "result": "n=531 fcac61820f87"
+        },
+        {
+          "seconds": 4.878194999182597e-05,
+          "min_seconds": 4.847178339259699e-05,
+          "max_seconds": 4.897214159136638e-05,
+          "runs": 7,
+          "inner_loops": 5000,
+          "op": "read_blob",
+          "result": "8911B sha=0f0da09d912c"
+        },
+        {
+          "seconds": 1.8526325830025598,
+          "min_seconds": 1.8497386250528507,
+          "max_seconds": 1.9217577920062467,
+          "runs": 3,
+          "inner_loops": 1,
+          "op": "blame",
+          "result": "lines=475"
+        }
+      ]
+    }
+  ],
+  "mismatches": []
+}
