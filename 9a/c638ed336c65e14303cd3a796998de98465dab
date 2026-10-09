@@ -1,0 +1,22 @@
+tests/test_stubs.py
+  s_03142e1246db67::t_d329efb641005d 1-38
+python/gitoxide/_gitoxide.pyi
+  s_03142e1246db67::t_651d7bcca27ebf 42-59
+  s_03142e1246db67::t_c7f62925320456 86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9ac638ed336c65e14303cd3a796998de98465dab",
+  "prompts": {},
+  "sessions": {
+    "s_03142e1246db67": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "85beb50d-b2bc-4c57-994c-9e24cb7abb7b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Xianpeng Shen <xianpeng.shen@gmail.com>"
+    }
+  }
+}
