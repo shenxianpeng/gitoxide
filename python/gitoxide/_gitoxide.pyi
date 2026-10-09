@@ -39,6 +39,24 @@ class Reference:
     shorthand: str
     target: Optional[str]
 
+class BlameHunk:
+    """A run of consecutive lines attributed to a single commit.
+
+    Line numbers are 1-based and inclusive, matching ``git blame`` output.
+    """
+
+    start_line: int
+    """First line of the run in the file being blamed."""
+    line_count: int
+    orig_start_line: int
+    """First line of the run in the file as it looked in ``commit_id``."""
+    commit_id: str
+    """Hex id of the commit that last touched these lines."""
+    end_line: int
+    """Last line of the run (inclusive)."""
+    short_id: str
+    """Abbreviated (7-char) commit id."""
+
 class Repository:
     """A handle to a git repository."""
 
@@ -65,6 +83,7 @@ class Repository:
     def branches(self) -> List[str]: ...
     def tags(self) -> List[str]: ...
     def read_blob(self, rev: str) -> bytes: ...
+    def blame(self, path: str, rev: Optional[str] = None) -> List[BlameHunk]: ...
 
 def open(path: StrPath) -> Repository: ...
 def discover(path: StrPath) -> Repository: ...
