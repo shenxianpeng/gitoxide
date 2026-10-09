@@ -291,8 +291,8 @@ impl Repository {
 
     /// Whether this is a shallow clone.
     #[getter]
-    fn is_shallow(&self) -> bool {
-        self.inner.is_shallow()
+    fn is_shallow(&self) -> PyResult<bool> {
+        self.inner.is_shallow().map_err(err)
     }
 
     /// The object id (hex) that ``HEAD`` currently points at, or ``None`` on an

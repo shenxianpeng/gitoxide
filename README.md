@@ -147,7 +147,9 @@ Properties: `git_dir`, `workdir`, `is_bare`, `is_shallow`, `head_id`,
 
 > **Note:** `head_name` and `head_is_detached` access the `HEAD` reference
 > and may raise `GitoxideError` if it is inaccessible (e.g., corrupted
-> repository). Other properties never raise.
+> repository). `is_shallow` may raise `GitoxideError` if the configured
+> shallow-file path cannot be represented on the platform. Other properties
+> never raise.
 
 Methods: `head_commit()`, `rev_parse(spec)`, `commit(rev)`,
 `commits(rev=None, max_count=None)`, `references()`, `branches()`, `tags()`,
