@@ -1,0 +1,37 @@
+.github/workflows/CI.yml
+  s_808bcb54b94641::t_c650a53cec788d 27,31,33-35
+  s_808bcb54b94641::t_b12dedb934b725 48-85
+tests/test_edge_cases.py
+  s_808bcb54b94641::t_82c6a16b1df536 1-209
+tests/test_repository.py
+  s_808bcb54b94641::t_51b0314a051fb3 177-178
+  s_808bcb54b94641::t_787e5e4c3d6f80 174-176
+  s_808bcb54b94641::t_6381703d0c5386 179-181
+README.md
+  s_808bcb54b94641::t_7cf25ae353e409 205,208,214,218-229
+  s_808bcb54b94641::t_1778b3218d864b 230
+tests/conftest.py
+  s_808bcb54b94641::t_ea519ccc5d9517 1,3,9,12-14,21-22,26-64,66-68,70-108,111-115
+.github/scripts/check_rust_coverage.py
+  s_808bcb54b94641::t_15b973ace38bbb 1-65
+.gitignore
+  s_808bcb54b94641::t_92f3c83b9ee59e 17-22
+pyproject.toml
+  s_808bcb54b94641::t_e05e7d825b355a 37,45-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "21b4ec5a6cb221d63467d57b138303fdb195a7d9",
+  "prompts": {},
+  "sessions": {
+    "s_808bcb54b94641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8f452822-7f74-42c5-8597-23c2eec5567e",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Xianpeng Shen <xianpeng.shen@gmail.com>"
+    }
+  }
+}
