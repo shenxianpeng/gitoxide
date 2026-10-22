@@ -104,11 +104,13 @@ def test_undecodable_ref(scratch_repo):
     (scratch_repo / ".git" / "refs" / "heads" / "broken").write_text("not a hash\n")
     (scratch_repo / ".git" / "refs" / "tags" / "broken").write_text("not a hash\n")
 
-    with pytest.raises(gitoxide.GitoxideError, match="refs/heads/broken"):
+    # The message quotes the loose ref's *file* path, so it uses the OS
+    # separator (Debug-escaped to `\\` on Windows).
+    with pytest.raises(gitoxide.GitoxideError, match=r"refs[/\\]+heads[/\\]+broken"):
         repo.references()
-    with pytest.raises(gitoxide.GitoxideError, match="refs/heads/broken"):
+    with pytest.raises(gitoxide.GitoxideError, match=r"refs[/\\]+heads[/\\]+broken"):
         repo.branches()
-    with pytest.raises(gitoxide.GitoxideError, match="refs/tags/broken"):
+    with pytest.raises(gitoxide.GitoxideError, match=r"refs[/\\]+tags[/\\]+broken"):
         repo.tags()
 
 
