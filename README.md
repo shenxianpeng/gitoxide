@@ -202,18 +202,31 @@ wheel):
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
-pip install maturin pytest
+pip install maturin pytest pytest-cov
 
 maturin develop          # build the extension into the venv
-pytest -q                # run the test suite
+pytest -q --cov          # run the test suite; the Python layer must stay at 100%
 
 cargo fmt --all          # format Rust
 cargo clippy --all-targets -- -D warnings
 ```
 
-The tests generate a throwaway git repository on the fly (see
+The tests generate throwaway git repositories on the fly (see
 [`tests/conftest.py`](tests/conftest.py)), so they need `git` on `PATH` but
 touch nothing outside a temp directory.
+
+CI also requires every line of `src/lib.rs` to be executed by the Python test
+suite. To measure that locally, build the extension inside the
+[`cargo-llvm-cov`](https://github.com/taiki-e/cargo-llvm-cov) environment
+(`cargo install cargo-llvm-cov && rustup component add llvm-tools-preview`):
+
+```bash
+source <(cargo llvm-cov show-env --sh)
+cargo llvm-cov clean --workspace
+maturin develop && pytest -q
+cargo llvm-cov report --lcov --output-path lcov.info
+python .github/scripts/check_rust_coverage.py lcov.info   # lists any missed line
+```
 
 ## License
 

@@ -24,15 +24,15 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - uses: dtolnay/rust-toolchain@4be7066ada62dd38de10e7b70166bc74ed198c30 # stable
-      - name: Install test deps
-        run: pip install pytest
-      - name: Build & install the extension
+      - name: Build & install the extension with its test deps
         # Build via PEP 517 (maturin backend, release profile by default) and
         # install into the runner's Python. Unlike `maturin develop`, this
         # needs no pre-existing virtualenv.
-        run: pip install .
+        run: pip install ".[test]"
       - name: Run tests
-        run: pytest -q
+        # `--cov` measures the pure-Python layer; `[tool.coverage.report]` in
+        # pyproject.toml fails the run below 100%.
+        run: pytest -q --cov --cov-report=term-missing
 
   lint:
     name: Rust lint (fmt + clippy)
@@ -44,6 +44,44 @@ jobs:
           components: rustfmt, clippy
       - run: cargo fmt --all -- --check
       - run: cargo clippy --all-targets -- -D warnings
+
+  coverage:
+    name: Rust coverage (100% of src/lib.rs)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+      - uses: dtolnay/rust-toolchain@4be7066ada62dd38de10e7b70166bc74ed198c30 # stable
+        with:
+          components: llvm-tools-preview
+      - uses: taiki-e/install-action@a4d3f3f761dcd95cce1b72cb61cb6d1963438177 # v2.87.30
+        with:
+          tool: cargo-llvm-cov@0.9.1
+      - name: Build an instrumented extension and run the test suite
+        # cargo-llvm-cov's "external tests" flow: export its environment
+        # (instrumented RUSTFLAGS, LLVM_PROFILE_FILE, ...), build the extension
+        # through maturin inside that environment, then let pytest exercise it.
+        # The test process writes a .profraw that `cargo llvm-cov report` reads.
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install maturin pytest
+          source <(cargo llvm-cov show-env --sh)
+          cargo llvm-cov clean --workspace
+          maturin develop
+          pytest -q
+      - name: Report Rust coverage
+        run: |
+          source <(cargo llvm-cov show-env --sh)
+          cargo llvm-cov report --summary-only
+          cargo llvm-cov report --lcov --output-path lcov.info
+      - name: Enforce 100% line coverage
+        # Every line of src/lib.rs must be hit, except the `#[pymethods]`
+        # attribute lines themselves: see the script for why rustc reports a
+        # (dead) coverage region there.
+        run: python .github/scripts/check_rust_coverage.py lcov.info
 
   wheels:
     name: Build wheels (${{ matrix.os }})

@@ -34,7 +34,7 @@ Repository = "https://github.com/shenxianpeng/gitoxide"
 "gitoxide (Rust)" = "https://github.com/GitoxideLabs/gitoxide"
 
 [project.optional-dependencies]
-test = ["pytest>=7.0"]
+test = ["pytest>=7.0", "pytest-cov>=4.0"]
 
 [tool.maturin]
 # Mixed Rust/Python project: pure-Python sources live in `python/`, the
@@ -42,3 +42,13 @@ test = ["pytest>=7.0"]
 python-source = "python"
 module-name = "gitoxide._gitoxide"
 features = ["pyo3/extension-module"]
+
+# Coverage of the pure-Python layer (`pytest --cov`). The Rust side is measured
+# separately with cargo-llvm-cov; see the `coverage` job in CI.
+[tool.coverage.run]
+source = ["gitoxide"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
