@@ -1,0 +1,31 @@
+.github/workflows/release-drafter.yml
+  s_808bcb54b94641::t_f687bf6dbff746 9-11,14-16,20
+.github/workflows/publish.yml
+  s_6535937731a8c8::t_d803d5babce516 95-97
+.github/workflows/CI.yml
+  s_6535937731a8c8::t_157cd55e69433f 26-28,44,46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "798603fa12afbfdc8c3741d58937d5713ac24e69",
+  "prompts": {},
+  "sessions": {
+    "s_6535937731a8c8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7be933fd-3555-4179-bf89-3d88091b3193",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Xianpeng Shen <xianpeng.shen@gmail.com>"
+    },
+    "s_808bcb54b94641": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8f452822-7f74-42c5-8597-23c2eec5567e",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Xianpeng Shen <xianpeng.shen@gmail.com>"
+    }
+  }
+}
