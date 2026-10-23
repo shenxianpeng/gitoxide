@@ -1,0 +1,21 @@
+.github/workflows/CI.yml
+  s_976c89a083fc6d::t_a265edc340df47 49,62-68,72,74-75
+README.md
+  s_976c89a083fc6d::t_70d89312c13b62 219-221,228-230
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c8d5a8e6adb3b6264d8f0e005c08d8174fbe1176",
+  "prompts": {},
+  "sessions": {
+    "s_976c89a083fc6d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a925ce73-1267-443d-83a8-ddf08446360c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Xianpeng Shen <xianpeng.shen@gmail.com>"
+    }
+  }
+}
