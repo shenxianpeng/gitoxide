@@ -216,16 +216,18 @@ The tests generate throwaway git repositories on the fly (see
 touch nothing outside a temp directory.
 
 CI also requires every line of `src/lib.rs` to be executed by the Python test
-suite. To measure that locally, build the extension inside the
+suite; the only lines allowed to stay unexecuted are the `#[pymethods]`
+attribute lines, where rustc reports a dead error edge of PyO3's generated
+wrapper. To measure that locally, build the extension inside the
 [`cargo-llvm-cov`](https://github.com/taiki-e/cargo-llvm-cov) environment
 (`cargo install cargo-llvm-cov && rustup component add llvm-tools-preview`):
 
 ```bash
 source <(cargo llvm-cov show-env --sh)
 cargo llvm-cov clean --workspace
-maturin develop && pytest -q
-cargo llvm-cov report --lcov --output-path lcov.info
-python .github/scripts/check_rust_coverage.py lcov.info   # lists any missed line
+pip install -e . && pytest -q
+cargo llvm-cov report --release --show-missing-lines \
+  --fail-uncovered-lines "$(grep -c '^#\[pymethods\]' src/lib.rs)"
 ```
 
 ## License

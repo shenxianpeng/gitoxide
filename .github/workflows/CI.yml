@@ -46,7 +46,7 @@ jobs:
       - run: cargo clippy --all-targets -- -D warnings
 
   coverage:
-    name: Rust coverage (100% of src/lib.rs)
+    name: Rust coverage (src/lib.rs, from pytest)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -59,29 +59,20 @@ jobs:
       - uses: taiki-e/install-action@a4d3f3f761dcd95cce1b72cb61cb6d1963438177 # v2.87.30
         with:
           tool: cargo-llvm-cov@0.9.1
-      - name: Build an instrumented extension and run the test suite
-        # cargo-llvm-cov's "external tests" flow: export its environment
-        # (instrumented RUSTFLAGS, LLVM_PROFILE_FILE, ...), build the extension
-        # through maturin inside that environment, then let pytest exercise it.
-        # The test process writes a .profraw that `cargo llvm-cov report` reads.
+      - name: Build instrumented, run pytest, require every line of src/lib.rs
+        # cargo-llvm-cov's external-tests flow: build inside its environment,
+        # run the suite, then report. The only lines that cannot execute are
+        # the `#[pymethods]` attribute lines, where rustc pins the dead `?`
+        # error edge of PyO3's generated receiver wrapper (the borrow cannot
+        # fail: every class is `frozen` or has no `&mut self` methods). Allow
+        # exactly that many uncovered lines; the report lists any others.
         run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          pip install maturin pytest
           source <(cargo llvm-cov show-env --sh)
           cargo llvm-cov clean --workspace
-          maturin develop
+          pip install pytest -e .
           pytest -q
-      - name: Report Rust coverage
-        run: |
-          source <(cargo llvm-cov show-env --sh)
-          cargo llvm-cov report --summary-only
-          cargo llvm-cov report --lcov --output-path lcov.info
-      - name: Enforce 100% line coverage
-        # Every line of src/lib.rs must be hit, except the `#[pymethods]`
-        # attribute lines themselves: see the script for why rustc reports a
-        # (dead) coverage region there.
-        run: python .github/scripts/check_rust_coverage.py lcov.info
+          cargo llvm-cov report --release --show-missing-lines \
+            --fail-uncovered-lines "$(grep -c '^#\[pymethods\]' src/lib.rs)"
 
   wheels:
     name: Build wheels (${{ matrix.os }})

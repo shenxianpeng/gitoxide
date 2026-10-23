@@ -17,6 +17,5 @@ wheels/
 
 # Coverage
 .coverage
-lcov.info
 *.profraw
 *.profdata
