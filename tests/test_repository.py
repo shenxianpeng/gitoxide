@@ -168,3 +168,95 @@ def test_blame_missing_path_raises(sample_repo):
     repo = gitoxide.open(str(sample_repo))
     with pytest.raises(gitoxide.GitoxideError):
         repo.blame("does-not-exist.txt")
+
+
+def test_repr_and_str(sample_repo):
+    repo = gitoxide.open(str(sample_repo))
+    head = repo.head_commit()
+
+    git_dir = str(repo.git_dir).replace("\\", "\\\\")  # Rust's Debug escaping
+    assert repr(repo) == 'Repository(git_dir="{}", bare=false)'.format(git_dir)
+    assert repr(head) == 'Commit(id={}, summary="second line")'.format(head.short_id)
+    assert repr(head.author) == (
+        'Signature(name="Ada Lovelace", email="ada@example.com", time=1577836800)'
+    )
+    assert str(head.author) == "Ada Lovelace <ada@example.com>"
+
+    ref = next(r for r in repo.references() if r.name == "refs/heads/main")
+    assert repr(ref) == 'Reference(name="refs/heads/main", target=Some("{}"))'.format(
+        head.id
+    )
+
+
+def test_commit_inequality(sample_repo):
+    repo = gitoxide.open(str(sample_repo))
+    assert repo.commit("HEAD") != repo.commit("HEAD~1")
+    assert hash(repo.commit("HEAD")) != hash(repo.commit("HEAD~1"))
+
+
+def test_signature_offset(sample_repo):
+    repo = gitoxide.open(str(sample_repo))
+    assert repo.head_commit().author.offset == 0
+    assert repo.head_commit().committer.offset == 0
+
+
+@pytest.mark.parametrize(
+    "call",
+    [
+        lambda repo: repo.rev_parse("no-such-rev"),
+        lambda repo: repo.commit("no-such-rev"),
+        lambda repo: repo.commits("no-such-rev"),
+        lambda repo: repo.read_blob("no-such-rev:README.md"),
+        lambda repo: repo.blame("README.md", "no-such-rev"),
+    ],
+)
+def test_bad_revspec_raises(sample_repo, call):
+    repo = gitoxide.open(str(sample_repo))
+    with pytest.raises(gitoxide.GitoxideError, match="couldn't parse revision"):
+        call(repo)
+
+
+def test_commit_rejects_non_commit_objects(sample_repo):
+    repo = gitoxide.open(str(sample_repo))
+    with pytest.raises(gitoxide.GitoxideError, match="kind tree"):
+        repo.commit("HEAD^{tree}")
+    with pytest.raises(gitoxide.GitoxideError, match="kind blob"):
+        repo.commit("HEAD:README.md")
+
+
+def test_read_blob_rejects_non_blob_objects(sample_repo):
+    repo = gitoxide.open(str(sample_repo))
+    with pytest.raises(gitoxide.GitoxideError, match="kind commit"):
+        repo.read_blob("HEAD")
+
+
+def test_discover_outside_any_repo_raises(tmp_path):
+    with pytest.raises(gitoxide.GitoxideError, match="Could not find a git repository"):
+        gitoxide.discover(str(tmp_path))
+    with pytest.raises(gitoxide.GitoxideError):
+        gitoxide.discover(str(tmp_path / "does-not-exist"))
+
+
+def test_init_refuses_existing_repo_and_files(sample_repo, tmp_path):
+    with pytest.raises(gitoxide.GitoxideError, match="Refusing to initialize"):
+        gitoxide.init(str(sample_repo))
+    with pytest.raises(gitoxide.GitoxideError, match="Refusing to initialize"):
+        gitoxide.init(str(sample_repo), bare=True)
+
+    not_a_dir = tmp_path / "file"
+    not_a_dir.write_text("")
+    with pytest.raises(gitoxide.GitoxideError):
+        gitoxide.init(str(not_a_dir))
+    with pytest.raises(gitoxide.GitoxideError):
+        gitoxide.init(str(not_a_dir), bare=True)
+
+
+def test_static_constructors_match_module_functions(sample_repo, tmp_path):
+    assert gitoxide.Repository.open(str(sample_repo)).git_dir.samefile(
+        sample_repo / ".git"
+    )
+    assert gitoxide.Repository.discover(str(sample_repo)).git_dir.samefile(
+        sample_repo / ".git"
+    )
+    assert gitoxide.Repository.init(str(tmp_path / "new")).is_bare is False
+    assert gitoxide.Repository.init(str(tmp_path / "new.git"), bare=True).is_bare

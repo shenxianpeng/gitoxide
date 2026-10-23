@@ -24,15 +24,15 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - uses: dtolnay/rust-toolchain@4be7066ada62dd38de10e7b70166bc74ed198c30 # stable
-      - name: Install test deps
-        run: pip install pytest
-      - name: Build & install the extension
+      - name: Build & install the extension with its test deps
         # Build via PEP 517 (maturin backend, release profile by default) and
         # install into the runner's Python. Unlike `maturin develop`, this
         # needs no pre-existing virtualenv.
-        run: pip install .
+        run: pip install ".[test]"
       - name: Run tests
-        run: pytest -q
+        # `--cov` measures the pure-Python layer; `[tool.coverage.report]` in
+        # pyproject.toml fails the run below 100%.
+        run: pytest -q --cov --cov-report=term-missing
 
   lint:
     name: Rust lint (fmt + clippy)
@@ -44,6 +44,35 @@ jobs:
           components: rustfmt, clippy
       - run: cargo fmt --all -- --check
       - run: cargo clippy --all-targets -- -D warnings
+
+  coverage:
+    name: Rust coverage (src/lib.rs, from pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+      - uses: dtolnay/rust-toolchain@4be7066ada62dd38de10e7b70166bc74ed198c30 # stable
+        with:
+          components: llvm-tools-preview
+      - uses: taiki-e/install-action@a4d3f3f761dcd95cce1b72cb61cb6d1963438177 # v2.87.30
+        with:
+          tool: cargo-llvm-cov@0.9.1
+      - name: Build instrumented, run pytest, require every line of src/lib.rs
+        # cargo-llvm-cov's external-tests flow: build inside its environment,
+        # run the suite, then report. The only lines that cannot execute are
+        # the `#[pymethods]` attribute lines, where rustc pins the dead `?`
+        # error edge of PyO3's generated receiver wrapper (the borrow cannot
+        # fail: every class is `frozen` or has no `&mut self` methods). Allow
+        # exactly that many uncovered lines; the report lists any others.
+        run: |
+          source <(cargo llvm-cov show-env --sh)
+          cargo llvm-cov clean --workspace
+          pip install pytest -e .
+          pytest -q
+          cargo llvm-cov report --release --show-missing-lines \
+            --fail-uncovered-lines "$(grep -c '^#\[pymethods\]' src/lib.rs)"
 
   wheels:
     name: Build wheels (${{ matrix.os }})

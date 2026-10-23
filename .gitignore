@@ -14,3 +14,8 @@ build/
 dist/
 *.egg-info/
 wheels/
+
+# Coverage
+.coverage
+*.profraw
+*.profdata
