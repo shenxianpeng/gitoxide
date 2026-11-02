@@ -33,7 +33,7 @@ fn bstr_to_string(b: &gix::bstr::BStr) -> String {
 // ---------------------------------------------------------------------------
 
 /// The authorship information attached to a commit (name, email, timestamp).
-#[pyclass(module = "gitoxide._gitoxide", frozen, skip_from_py_object)]
+#[pyclass(module = "gitoxide._gitoxide", frozen)]
 #[derive(Clone)]
 struct Signature {
     #[pyo3(get)]
@@ -79,7 +79,7 @@ impl Signature {
 // ---------------------------------------------------------------------------
 
 /// A fully-decoded, owned view of a git commit.
-#[pyclass(module = "gitoxide._gitoxide", frozen, skip_from_py_object)]
+#[pyclass(module = "gitoxide._gitoxide", frozen)]
 #[derive(Clone)]
 struct Commit {
     #[pyo3(get)]
@@ -157,7 +157,7 @@ impl Commit {
 // ---------------------------------------------------------------------------
 
 /// A git reference (branch, tag, or other ref) and the object it points at.
-#[pyclass(module = "gitoxide._gitoxide", frozen, skip_from_py_object)]
+#[pyclass(module = "gitoxide._gitoxide", frozen)]
 #[derive(Clone)]
 struct Reference {
     /// The full ref name, e.g. `refs/heads/main`.
@@ -185,7 +185,7 @@ impl Reference {
 /// A run of consecutive lines attributed to a single commit.
 ///
 /// Line numbers are 1-based and inclusive, matching ``git blame`` output.
-#[pyclass(module = "gitoxide._gitoxide", frozen, skip_from_py_object)]
+#[pyclass(module = "gitoxide._gitoxide", frozen)]
 #[derive(Clone)]
 struct BlameHunk {
     /// First line of the run in the file being blamed.
