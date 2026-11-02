@@ -14,12 +14,13 @@ name = "_gitoxide"
 crate-type = ["cdylib"]
 
 [dependencies]
-# The gitoxide engine. `max-performance-safe` keeps builds portable (no C
+# The gitoxide engine. `max-performance` keeps builds portable (no C
 # toolchain required) while enabling the `parallel` feature, which makes
 # `gix::Repository` `Send + Sync` (backed by `Arc`) so it can live inside a
 # PyO3 `#[pyclass]`.
-gix = { version = "0.89", default-features = false, features = [
-    "max-performance-safe",
+gix = { version = "0.90", default-features = false, features = [
+    # `max-performance` is what gix <= 0.89 called `max-performance-safe`.
+    "max-performance",
     "revision",
     "sha1",
     # `blame` pulls in `blob-diff` (and thus `attributes`); it is what backs
